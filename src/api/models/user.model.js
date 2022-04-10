@@ -18,6 +18,18 @@ const roles = ['user', 'admin'];
  * @private
  */
 const userSchema = new mongoose.Schema({
+  firstName: {
+    type: String,
+    maxlength: 128,
+    index: true,
+    trim: true,
+  },
+  lastName: {
+    type: String,
+    maxlength: 128,
+    index: true,
+    trim: true,
+  },
   email: {
     type: String,
     match: /^\S+@\S+\.\S+$/,
@@ -32,10 +44,12 @@ const userSchema = new mongoose.Schema({
     minlength: 6,
     maxlength: 128,
   },
-  name: {
+  picture: {
     type: String,
-    maxlength: 128,
-    index: true,
+    trim: true,
+  },
+  phone: {
+    type: String,
     trim: true,
   },
   services: {
@@ -46,10 +60,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: roles,
     default: 'user',
-  },
-  picture: {
-    type: String,
-    trim: true,
   },
 }, {
   timestamps: true,
@@ -82,7 +92,7 @@ userSchema.pre('save', async function save(next) {
 userSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt'];
+    const fields = ['id', 'firstName', 'lastName', 'email', 'picture', 'phone', 'role', 'createdAt'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
