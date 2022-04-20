@@ -15,12 +15,7 @@ router.get('/status', (req, res) => res.send('OK'));
  * GET v1/docs
  */
 router.use('/docs', express.static('docs'));
-/**
- * Setting image static
- */
-router.use('images', express.static('images'));
 
-// router.use('/images', express.static(path.join(__dirname, '..', 'images', 'category')));
 router.use('/users', userRoutes);
 router.use('/auth', authRoutes);
 router.use('/category', categoryRoutes);

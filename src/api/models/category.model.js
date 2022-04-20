@@ -24,12 +24,17 @@ const categorySchema = new mongoose.Schema({
  * Methods
  */
 categorySchema.method({
-  transform() {
+  transform(req) {
+    const fullUrl = `${req.protocol}://${req.get('host')}`;
     const transformed = {};
     const fields = ['id', 'name', 'icon', 'color'];
 
     fields.forEach((field) => {
-      transformed[field] = this[field];
+      if (field === 'icon') {
+        transformed[field] = `${fullUrl}${this[field]}`;
+      } else {
+        transformed[field] = this[field];
+      }
     });
 
     return transformed;

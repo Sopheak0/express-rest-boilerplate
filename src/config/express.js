@@ -6,10 +6,12 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
 const passport = require('passport');
+// const formidable = require('formidable');
 const routes = require('../api/routes/v1');
 const { logs } = require('./vars');
 const strategies = require('./passport');
 const error = require('../api/middlewares/error');
+const constants = require('./constants');
 
 /**
 * Express instance
@@ -24,8 +26,14 @@ app.use(morgan(logs));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Handle multipart
+// app.use(formidable());
+
 // gzip compression
 app.use(compress());
+
+// use static image directory
+app.use(express.static(constants.publicDir));
 
 // lets you use HTTP verbs such as PUT or DELETE
 // in places where the client doesn't support it

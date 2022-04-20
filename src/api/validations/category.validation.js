@@ -16,8 +16,8 @@ module.exports = {
   // POST /v1/category
   createCategory: {
     body: {
-      name: Joi.string().required(),
-      // icon: Joi.string().min(6).max(128).required(),
+      name: Joi.string(),
+      icon: Joi.string().allow(null).optional(),
       color: Joi.string(),
     },
   },
