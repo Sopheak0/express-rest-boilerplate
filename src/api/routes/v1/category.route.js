@@ -24,7 +24,7 @@ router
 
 router
   .route('/:cateId')
-  // .get(authorize(LOGGED_USER), controller.get)
+  .get(controller.get)
   .patch(authorize(ADMIN), validate(updateCategory), controller.update)
   .delete(authorize(ADMIN), validate(deleteCategory), controller.remove);
 module.exports = router;

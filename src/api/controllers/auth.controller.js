@@ -101,7 +101,7 @@ exports.sendPasswordReset = async (req, res, next) => {
       const passwordResetObj = await PasswordResetToken.generate(user);
       emailProvider.sendPasswordReset(passwordResetObj);
       res.status(httpStatus.OK);
-      return res.json('success');
+      return res.json({ message: 'Successfully' });
     }
     throw new APIError({
       status: httpStatus.UNAUTHORIZED,

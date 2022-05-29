@@ -102,3 +102,48 @@ exports.remove = (req, res, next) => {
     .then(() => res.status(httpStatus.NO_CONTENT).end())
     .catch((e) => next(e));
 };
+
+/**
+ * User add favorite
+ * @public
+ */
+exports.addFavorite = async (req, res, next) => {
+  try {
+    const { user } = req.locals;
+    const savedUser = await user.save();
+    res.status(httpStatus.CREATED);
+    res.json(savedUser.transform());
+  } catch (error) {
+    next(User.checkDuplicateEmail(error));
+  }
+};
+
+/**
+ * User remove favorite
+ * @public
+ */
+exports.removeFavorite = async (req, res, next) => {
+  try {
+    const user = new User(req.body);
+    const savedUser = await user.save();
+    res.status(httpStatus.CREATED);
+    res.json(savedUser.transform());
+  } catch (error) {
+    next(User.checkDuplicateEmail(error));
+  }
+};
+
+/**
+ * User add favorite
+ * @public
+ */
+exports.getListFavorite = async (req, res, next) => {
+  try {
+    const user = new User(req.body);
+    const savedUser = await user.save();
+    res.status(httpStatus.CREATED);
+    res.json(savedUser.transform());
+  } catch (error) {
+    next(User.checkDuplicateEmail(error));
+  }
+};

@@ -5,37 +5,72 @@ const httpStatus = require('http-status');
 const Category = require('../models/category.model');
 const APIError = require('../errors/api-error');
 const myUtils = require('../utils/myUtils');
+
 /**
- * Load category and append to req.
+ * Get category list
  * @public
  */
-// exports.load = async (req, res, next, id) => {
-//   try {
-//     const user = await Category.get(id);
-//     req.locals = { user };
-//     return next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// };
+exports.list = async (req, res, next) => {
+  try {
+    const {
+      page, size, name,
+    } = req.query;
 
-// /**
-//  * Get user
-//  * @public
-//  */
-// exports.get = (req, res) => res.json(req.locals.user.transform());
+    const query = {};
+    if (name) {
+      query.name = { $regex: new RegExp(name), $options: 'i' };
+    }
+    // if (color) {
+    //   query.color = { $regex: new RegExp(color), $options: 'i' };
+    // }
+    const { limit, offset } = myUtils.getPagination(page, size);
 
-// /**
-//  * Get logged in user info
-//  * @public
-//  */
-// exports.loggedIn = (req, res) => res.json(req.user.transform());
+    const options = {
+      // populate: [{
+      //   path: 'category',
+      //   select: 'name'
+      // }],
+      sort: ({ createdAt: -1 }),
+    };
 
-// How to store base64
-// const base64 = req.body.icon.replace(/^data:image\/png;base64,/, '');
-// const buffer = Buffer.from(base64, 'base64');
-// const path = `./images/category/${Date.now()}.png`;
-// fs.writeFileSync(path, buffer);
+    Category.paginate(query, { offset, limit, options })
+      .then((data) => {
+        const transformedCategories = data.docs.map((category) => category.transform(req));
+        res.send({
+          totalItems: data.totalDocs,
+          data: transformedCategories,
+          totalPages: data.totalPages,
+          currentPage: data.page - 1,
+        });
+      }).catch((err) => {
+        console.log(`${req.method} : ${req.originalUrl}, message: ${err.message}`);
+        next(err);
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get single category
+ * @public
+ */
+exports.get = async (req, res, next) => {
+  try {
+    const category = await Category.findById(req.params.cateId);
+    if (category != null) {
+      res.status(httpStatus.OK);
+      res.json(category.transform(req));
+    } else {
+      throw new APIError({
+        message: 'Category does not exist',
+        status: httpStatus.NOT_FOUND,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 // /**
 //  * Create new user
@@ -66,26 +101,6 @@ exports.create = async (req, res, next) => {
 };
 
 // /**
-//  * Replace existing user
-//  * @public
-//  */
-// exports.replace = async (req, res, next) => {
-//   try {
-//     const { user } = req.locals;
-//     const newUser = new User(req.body);
-//     const ommitRole = user.role !== 'admin' ? 'role' : '';
-//     const newUserObject = omit(newUser.toObject(), '_id', ommitRole);
-
-//     await user.updateOne(newUserObject, { override: true, upsert: true });
-//     const savedUser = await User.findById(user._id);
-
-//     res.json(savedUser.transform());
-//   } catch (error) {
-//     next(User.checkDuplicateEmail(error));
-//   }
-// };
-
-// /**
 //  * Update existing category
 //  * @public
 //  */
@@ -100,26 +115,15 @@ exports.update = async (req, res, next) => {
           next(err);
         }
         category.set(fields);
-
         if (!files.length) { // check if single file
           const storedIconUrl = myUtils.storeSingleImage(files.icon, 'category');
           myUtils.removeSingleImage(`./src/public${category.icon}`);
           category.icon = storedIconUrl;
         }
-
         const savedCategory = await category.save();
         res.status(httpStatus.OK);
         res.json(savedCategory.transform(req));
       });
-
-      // if (req.body.icon != null){
-
-      // }
-      // const omitCategoryIcon = omit(category, ['icon']);
-      // const savedCategory = await omitCategoryIcon.save();
-
-      // res.status(httpStatus.OK).send({ status: 'ok' });
-      // res.json(savedCategory.transform(req));
     } else {
       throw new APIError({
         message: 'Category does not exist',
@@ -128,20 +132,6 @@ exports.update = async (req, res, next) => {
     }
   } catch (err) {
     next(err);
-  }
-};
-
-/**
- * Get category list
- * @public
- */
-exports.list = async (req, res, next) => {
-  try {
-    const categories = await Category.find(req.query);
-    const transformedCategories = categories.map((category) => category.transform(req));
-    res.json(transformedCategories);
-  } catch (error) {
-    next(error);
   }
 };
 
@@ -167,10 +157,4 @@ exports.remove = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-
-  // const { user } = req.locals;
-
-  // user.remove()
-  //   .then(() => res.status(httpStatus.NO_CONTENT).end())
-  //   .catch((e) => next(e));
 };

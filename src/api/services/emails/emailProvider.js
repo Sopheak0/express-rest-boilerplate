@@ -28,7 +28,7 @@ exports.sendPasswordReset = async (passwordResetObject) => {
   const email = new Email({
     views: { root: __dirname },
     message: {
-      from: 'support@your-app.com',
+      from: 'support@vehha.com',
     },
     // uncomment below to send emails in development/test env:
     send: true,
@@ -42,7 +42,7 @@ exports.sendPasswordReset = async (passwordResetObject) => {
         to: passwordResetObject.userEmail,
       },
       locals: {
-        productName: 'Test App',
+        productName: 'Vehha Service Provider',
         // passwordResetUrl should be a URL to your app that displays a view where they
         // can enter a new password along with passing the resetToken in the params
         passwordResetUrl: `https://your-app/new-password/view?resetToken=${passwordResetObject.resetToken}`,

@@ -61,6 +61,12 @@ const userSchema = new mongoose.Schema({
     enum: roles,
     default: 'user',
   },
+  favoriteStores: {
+    type: [{
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Store',
+    }],
+  },
 }, {
   timestamps: true,
 });

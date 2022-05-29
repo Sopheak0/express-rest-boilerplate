@@ -186,4 +186,9 @@ router
    */
   .delete(authorize(LOGGED_USER), controller.remove);
 
+router.route('/favorite')
+  .get(authorize(LOGGED_USER), controller.getListFavorite)
+  .post(authorize(LOGGED_USER), controller.addFavorite)
+  .delete(authorize(LOGGED_USER), controller.removeFavorite);
+
 module.exports = router;
