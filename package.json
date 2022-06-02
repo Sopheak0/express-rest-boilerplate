@@ -1,10 +1,10 @@
 {
-  "name": "express-rest-es2017-boilerplate",
+  "name": "vehha-api",
   "version": "1.2.2",
-  "description": "Express boilerplate for building RESTful APIs",
-  "author": "Daniel Sousa <sousa.dfs@gmail.com>",
+  "description": "Vehha's API project",
+  "author": "Sopheak Sok <soksopheak669@gmail.com>",
   "main": "src/index.js",
-  "private": false,
+  "private": true,
   "license": "MIT",
   "engines": {
     "node": ">=8",
